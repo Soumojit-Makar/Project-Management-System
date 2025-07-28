@@ -81,6 +81,7 @@ public class UserServiceImp implements UserService {
         return userMapToUserResponse(userRepository.save(user));
     }
 
+
     private  Authentication authenticate(@NotBlank(message = "Email id required") @Email(message = "Invalid Email Address") String email, @NotBlank(message = "Password id required") String password) {
         UserDetails userDetails=customeUserDetailsImpl.loadUserByUsername(email);
         if (userDetails == null) {

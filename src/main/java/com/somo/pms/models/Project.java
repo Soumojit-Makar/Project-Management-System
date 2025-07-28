@@ -7,34 +7,32 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-
-public class Issue {
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String title;
+    private String name;
     @Column(columnDefinition = "TEXT")
     private String description;
-    private String status;
-    private String projectId;
-    private String priority;
-    private LocalDate dueDate;
+    private String category;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> tags = new ArrayList<>();
-    @ManyToOne
-    private User assignee ;
-    @ManyToOne
-    private Project project;
-    @OneToMany(mappedBy = "issue",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<String> tags= new ArrayList<>();
     @JsonIgnore
-    private List<Comment> comments=new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "project",orphanRemoval = true)
+    private Chat chat;
+    @ManyToOne
+    private User owner;
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL,orphanRemoval = true)
+    private  List<Issue> issues=new ArrayList<>();
+    @ManyToMany
+    private List<User> team=new ArrayList<>();
 }
