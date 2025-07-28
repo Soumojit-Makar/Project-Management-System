@@ -1,9 +1,14 @@
 package com.somo.pms.services.imp;
 import com.somo.pms.auth.JwtProvider;
-import com.somo.pms.dto.*;
+import com.somo.pms.dto.request.LoginRequest;
+import com.somo.pms.dto.request.UpdateUserRequest;
+import com.somo.pms.dto.request.UserRequest;
+import com.somo.pms.dto.response.TokenResponse;
+import com.somo.pms.dto.response.UserResponse;
 import com.somo.pms.models.User;
 import com.somo.pms.repositories.UserRepository;
 import com.somo.pms.services.UserService;
+import com.somo.pms.utils.ProjectUtils;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.coyote.BadRequestException;
@@ -35,11 +40,11 @@ public class UserServiceImp implements UserService {
             throw new BadRequestException("User is already exist");
         }
 //        System.out.println(userRequest.toString());
-        User user = userRequestMapToUser(userRequest);
+        User user = ProjectUtils.userRequestMapToUser(userRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setProjectSize(0);
 //        System.out.println(user.toString());
-        return userMapToUserResponse(userRepository.save(user));
+        return ProjectUtils.userMapToUserResponse(userRepository.save(user));
     }
     public TokenResponse createToken(LoginRequest request){
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()->new BadCredentialsException("Email not found"));
@@ -51,7 +56,7 @@ public class UserServiceImp implements UserService {
                 .token(token)
                 .message("Successfully logged in")
                 .expires(Date.from(Instant.now().plusSeconds(60*60*24)))
-                .user(userMapToUserResponse(user))
+                .user(ProjectUtils.userMapToUserResponse(user))
                 .header("Bearer ")
                 .build();
     }
@@ -65,20 +70,40 @@ public class UserServiceImp implements UserService {
             user.setFullName(user.getFullName());
         }
         user.setProjectSize(userRequest.getProjectSize());
-        return userMapToUserResponse(userRepository.save(user));
+        return ProjectUtils.userMapToUserResponse(userRepository.save(user));
     }
     public UserResponse getUser(String id) throws BadRequestException {
         User user = userRepository.findById(id).orElseThrow(()->new BadRequestException("User not found"));
-        return userMapToUserResponse(user);
+        return ProjectUtils.userMapToUserResponse(user);
     }
     public UserResponse getUserByEmail(String email) throws BadRequestException {
         User user = userRepository.findByEmail(email).orElseThrow(()->new BadRequestException("User not found"));
-        return userMapToUserResponse(user);
+        return ProjectUtils.userMapToUserResponse(user);
     }
+
+    @Override
+    public User findUserByJWT(String jwt) throws BadRequestException {
+        String email=jwtProvider.getEmail(jwt);
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(()->new BadRequestException("User not found"));
+    }
+
+    @Override
+    public UserResponse updateUserProjectSize(String userId, int number) throws BadRequestException {
+        User user = userRepository.findById(userId).orElseThrow(()->new BadRequestException("User not found"));
+        user.setProjectSize(user.getProjectSize()+number);
+        if(user.getProjectSize()<0){
+            user.setProjectSize(0);
+        }
+        return ProjectUtils
+                .userMapToUserResponse(userRepository.save(user));
+    }
+
     public UserResponse updatePassword( String password,String email ) throws BadRequestException {
         User user = userRepository.findByEmail(email).orElseThrow(()->new BadRequestException("User not found"));
         user.setPassword(passwordEncoder.encode(password));
-        return userMapToUserResponse(userRepository.save(user));
+        return ProjectUtils.userMapToUserResponse(userRepository.save(user));
     }
 
 
@@ -93,21 +118,7 @@ public class UserServiceImp implements UserService {
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    private static User userRequestMapToUser(UserRequest userRequest) {
-        return User.builder()
-                .fullName(userRequest.getFullName())
-                .email(userRequest.getEmail())
-                .password(userRequest.getPassword())
-                .build();
-    }
-    private static UserResponse userMapToUserResponse(User user) {
-        return  UserResponse.builder()
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .projectSize(user.getProjectSize())
-                .build();
-    }
+
 
 
 }

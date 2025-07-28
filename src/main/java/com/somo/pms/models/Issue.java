@@ -33,6 +33,7 @@ public class Issue {
     @ManyToOne
     private User assignee ;
     @ManyToOne
+    @JsonIgnore
     private Project project;
     @OneToMany(mappedBy = "issue",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore

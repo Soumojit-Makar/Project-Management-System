@@ -1,12 +1,7 @@
-package com.somo.pms.dto;
+package com.somo.pms.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.somo.pms.models.Issue;
-import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor

@@ -1,4 +1,4 @@
-package com.somo.pms.dto;
+package com.somo.pms.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

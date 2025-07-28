@@ -1,4 +1,4 @@
-package com.somo.pms.dto;
+package com.somo.pms.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

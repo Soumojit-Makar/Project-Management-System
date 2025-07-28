@@ -1,13 +1,12 @@
 package com.somo.pms.controllers;
 
-import com.somo.pms.dto.LoginRequest;
-import com.somo.pms.dto.TokenResponse;
-import com.somo.pms.dto.UserRequest;
-import com.somo.pms.dto.UserResponse;
+import com.somo.pms.dto.request.LoginRequest;
+import com.somo.pms.dto.response.TokenResponse;
+import com.somo.pms.dto.request.UserRequest;
+import com.somo.pms.dto.response.UserResponse;
 import com.somo.pms.services.UserService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
