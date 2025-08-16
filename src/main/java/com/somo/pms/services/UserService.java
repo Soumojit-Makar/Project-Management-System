@@ -17,4 +17,5 @@ public interface UserService {
     public UserResponse getUserByEmail(String email) throws BadRequestException;
     public User findUserByJWT(String jwt) throws BadRequestException;
     public UserResponse updateUserProjectSize(String userId,int number) throws BadRequestException;
+    public String findUserIdByJWT(String jwt) throws BadRequestException;
 }

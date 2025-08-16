@@ -25,7 +25,6 @@ public class Issue {
     @Column(columnDefinition = "TEXT")
     private String description;
     private String status;
-    private String projectId;
     private String priority;
     private LocalDate dueDate;
     @ElementCollection(fetch = FetchType.EAGER)

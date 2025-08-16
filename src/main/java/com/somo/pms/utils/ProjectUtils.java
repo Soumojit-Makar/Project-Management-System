@@ -86,7 +86,7 @@ public  class ProjectUtils {
                 .dueDate(issue.getDueDate())
                 .priority(issue.getPriority())
                 .status(issue.getStatus())
-                .projectId(issue.getProjectId())
+                .projectId(issue.getProject().getId())
                 .tags(issue.getTags())
                 .build();
     }

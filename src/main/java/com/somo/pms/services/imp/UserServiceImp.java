@@ -80,7 +80,6 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findByEmail(email).orElseThrow(()->new BadRequestException("User not found"));
         return ProjectUtils.userMapToUserResponse(user);
     }
-
     @Override
     public User findUserByJWT(String jwt) throws BadRequestException {
         String email=jwtProvider.getEmail(jwt);
@@ -88,7 +87,9 @@ public class UserServiceImp implements UserService {
                 .findByEmail(email)
                 .orElseThrow(()->new BadRequestException("User not found"));
     }
-
+    public String findUserIdByJWT(String jwt) throws BadRequestException {
+       return this.findUserByJWT(jwt).getId();
+    }
     @Override
     public UserResponse updateUserProjectSize(String userId, int number) throws BadRequestException {
         User user = userRepository.findById(userId).orElseThrow(()->new BadRequestException("User not found"));
@@ -99,14 +100,11 @@ public class UserServiceImp implements UserService {
         return ProjectUtils
                 .userMapToUserResponse(userRepository.save(user));
     }
-
     public UserResponse updatePassword( String password,String email ) throws BadRequestException {
         User user = userRepository.findByEmail(email).orElseThrow(()->new BadRequestException("User not found"));
         user.setPassword(passwordEncoder.encode(password));
         return ProjectUtils.userMapToUserResponse(userRepository.save(user));
     }
-
-
     private  Authentication authenticate(@NotBlank(message = "Email id required") @Email(message = "Invalid Email Address") String email, @NotBlank(message = "Password id required") String password) {
         UserDetails userDetails=customeUserDetailsImpl.loadUserByUsername(email);
         if (userDetails == null) {
@@ -117,8 +115,4 @@ public class UserServiceImp implements UserService {
         }
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
-
-
-
-
 }
